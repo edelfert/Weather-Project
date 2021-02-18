@@ -1,11 +1,22 @@
 const express = require('express');
 const app = express();
 const https = require('https');
-
+const bodyParser = require('body-parser')
+app.use(bodyParser.urlencoded({extended: true}));
 
 
 app.get('/', function(req, res){
-  const url = "https://api.openweathermap.org/data/2.5/weather?q=boston&units=imperial&appid=2b618a8a77b897a553910fb8461abc13"
+  res.sendFile(__dirname + "/index.html")
+  // })
+
+})
+
+app.post ("/", function (req,res){
+  const query = req.body.cityName;
+  const apiKey = "2b618a8a77b897a553910fb8461abc13"
+  const unit = "imperial"
+  const url = "https://api.openweathermap.org/data/2.5/weather?q=" + query + "&units=" + unit + "&appid=" + apiKey
+
   https.get(url, function (response){
     console.log(response)
 
@@ -17,15 +28,12 @@ app.get('/', function(req, res){
       const imageURL = "http://openweathermap.org/img/wn/" + icon + "@2x.png"
 
       res.write("<h1>The weather is currently " + description + "</h1>")
-      res.write("<h1>The temperature in Boston is " + temp + " degrees Farenheit </h1>")
+      res.write("<h1>The temperature in " + query + " is " + temp + " degrees Farenheit </h1>")
       res.write("<img src=" + imageURL + ">")
       res.send();
     })
   })
-
-
 })
-
 
 app.listen(3000, function () {
   console.log('Server is running on 3000')
